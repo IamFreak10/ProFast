@@ -8,6 +8,8 @@ import Register from '../Pages/AUthentication/Register/Register';
 import Coverage from '../Pages/Coverage/Coverage';
 import PrivateRoutes from '../Routes/PrivateRoutes';
 import SendParcel from '../Pages/SendParcel/SendParcel';
+import DashBordLayout from '../Layouts/DashBordLayout';
+import MyParcels from '../Pages/DashBord/MyParcels/MyParcels';
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -44,5 +46,19 @@ export const router = createBrowserRouter([
         Component: Register,
       },
     ],
-  },
+  },{
+    path:'/dashboard',
+    element:(
+      <PrivateRoutes>
+        <DashBordLayout></DashBordLayout>
+      </PrivateRoutes>
+    ),
+
+    children:[
+      {
+        path:'myParcels',
+        Component:MyParcels
+      }
+    ]
+  }
 ]);

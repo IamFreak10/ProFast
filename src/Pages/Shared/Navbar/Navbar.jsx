@@ -1,15 +1,14 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router';
 import ProFastLogo from '../Profastlogo/ProFastLogo';
+import useAuth from '../../../Hooks/useAuth';
 
 const Navbar = () => {
+  const { user } = useAuth();
   const navitems = (
     <>
       <li>
         <NavLink to="/">Home</NavLink>
-      </li>
-      <li>
-        <NavLink to="/about">About</NavLink>
       </li>
       <li>
         <NavLink to="/coverage">Coverage</NavLink>
@@ -17,6 +16,16 @@ const Navbar = () => {
       <li>
         <NavLink to="/sendparcel">Send Parcel</NavLink>
       </li>
+      <li>
+        <NavLink to="/about">About</NavLink>
+      </li>
+      {user && (
+        <>
+          <li>
+            <NavLink to="/dashboard">Dashboard</NavLink>
+          </li>
+        </>
+      )}
     </>
   );
   return (
@@ -48,16 +57,16 @@ const Navbar = () => {
           </ul>
         </div>
         <button className="btn btn-ghost text-xl">
-            <ProFastLogo></ProFastLogo>
+          <ProFastLogo></ProFastLogo>
         </button>
       </div>
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1">
-          {navitems}
-        </ul>
+        <ul className="menu menu-horizontal px-1">{navitems}</ul>
       </div>
       <div className="navbar-end">
-      <Link to='/login' className="btn btn-primary">Login</Link>
+        <Link to="/login" className="btn btn-primary">
+          Login
+        </Link>
       </div>
     </div>
   );
