@@ -8,7 +8,7 @@ import useAxiosSecure from '../../Hooks/useAxiosSecure';
 
 const SendParcel = () => {
   const { user } = useAuth();
-  const axiosInstance = useAxiosSecure();
+  const axiosSecure = useAxiosSecure();
   function generateTrackingId() {
     const date = new Date();
     const yyyymmdd = date.toISOString().slice(0, 10).replace(/-/g, '');
@@ -16,7 +16,7 @@ const SendParcel = () => {
     return `TRK-${yyyymmdd}-${randomPart}`;
   }
 
-  const userName = user?.displayName;
+ 
   const {
     register,
     handleSubmit,
@@ -28,7 +28,7 @@ const SendParcel = () => {
   } = useForm({
     defaultValues: {
       type: 'document',
-      senderName: userName,
+     
     },
   });
 
@@ -255,7 +255,7 @@ ${!sameDistrict ? '- Outside District Charge: ৳40' : ''}
       };
 
       try {
-        axiosInstance.post('/parcels', payload).then((res) => {
+        axiosSecure.post('/parcels', payload).then((res) => {
          if(res.data.insertedId){
           // TODO:Redirect to payment page
            Swal.fire({
@@ -339,12 +339,12 @@ ${!sameDistrict ? '- Outside District Charge: ৳40' : ''}
                   Name
                 </label>
                 <input
-                  {...register('receiverName', { required: true })}
+                  {...register('senderName', { required: true })}
                   type="text"
                   className="input input-bordered w-full"
                 />
               </div>
-              <input type="hidden" {...register('senderName')} />
+             
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                   Contact

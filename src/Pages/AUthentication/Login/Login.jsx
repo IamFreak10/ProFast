@@ -1,16 +1,31 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { Link, Outlet } from 'react-router';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router';
 import SocialLogin from '../socialLogin/socialLogin';
+import useAuth from '../../../Hooks/useAuth';
+import Swal from 'sweetalert2';
 
 const Login = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const from=location.state?.from|| '/'; 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const {signIn} = useAuth();
   const onsubmit = (data) => {
-    console.log(data);
+    signIn(data.email, data.password)
+      .then((res) => {
+        console.log(res);
+        navigate(from);
+
+      })
+      .catch((error) => {
+    
+      console.log(error);
+      });
   };
   return (
     <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
@@ -31,7 +46,7 @@ const Login = () => {
               {...register('password', {
                 required: true,
                 minLength: 6,
-                pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/,
+               
               })}
               className="input"
               placeholder="Password"

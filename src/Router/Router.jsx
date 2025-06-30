@@ -10,6 +10,8 @@ import PrivateRoutes from '../Routes/PrivateRoutes';
 import SendParcel from '../Pages/SendParcel/SendParcel';
 import DashBordLayout from '../Layouts/DashBordLayout';
 import MyParcels from '../Pages/DashBord/MyParcels/MyParcels';
+import Payment from '../Pages/DashBord/Payment/Payment';
+import PyamentHistory from '../Pages/DashBord/Payment/PyamentHistory';
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -46,19 +48,28 @@ export const router = createBrowserRouter([
         Component: Register,
       },
     ],
-  },{
-    path:'/dashboard',
-    element:(
+  },
+  {
+    path: '/dashboard',
+    element: (
       <PrivateRoutes>
         <DashBordLayout></DashBordLayout>
       </PrivateRoutes>
     ),
 
-    children:[
+    children: [
       {
-        path:'myParcels',
-        Component:MyParcels
-      }
-    ]
-  }
+        path: 'myParcels',
+        Component: MyParcels,
+      },
+      {
+        path: 'payment/:id',
+        Component: Payment,
+      },
+      {
+        path: 'paymentHistory',
+        Component: PyamentHistory,
+      },
+    ],
+  },
 ]);

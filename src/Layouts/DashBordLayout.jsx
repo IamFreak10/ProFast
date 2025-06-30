@@ -1,5 +1,7 @@
 import React from 'react';
-import { Outlet } from 'react-router';
+import { NavLink, Outlet } from 'react-router';
+import ProFastLogo from '../Pages/Shared/Profastlogo/ProFastLogo';
+import { FaBoxOpen, FaHistory, FaHome, FaSearchLocation, FaUserEdit } from 'react-icons/fa';
 
 const DashBordLayout = () => {
   return (
@@ -29,19 +31,8 @@ const DashBordLayout = () => {
             </label>
           </div>
           <div className="mx-2 flex-1 px-2">Navbar Title</div>
-          <div className="hidden flex-none lg:block">
-            <ul className="menu menu-horizontal">
-              {/* Navbar menu content here */}
-              <li>
-                <a>Navbar Item 1</a>
-              </li>
-              <li>
-                <a>Navbar Item 2</a>
-              </li>
-            </ul>
-          </div>
         </div>
-      <Outlet></Outlet>
+        <Outlet></Outlet>
         {/* Page content here */}
       </div>
       <div className="drawer-side">
@@ -50,18 +41,55 @@ const DashBordLayout = () => {
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
-        <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+        <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4 space-y-2">
           {/* Sidebar content here */}
+          <ProFastLogo />
+
           <li>
-            <a>Sidebar Item 1</a>
+            <NavLink to="/" className="flex items-center gap-2">
+              <FaHome />
+              <span>Home</span>
+            </NavLink>
+          </li>
+
+          <li>
+            <NavLink
+              to="/dashboard/myParcels"
+              className="flex items-center gap-2"
+            >
+              <FaBoxOpen /> {/* optional icon for better UX */}
+              <span>My Parcels</span>
+            </NavLink>
           </li>
           <li>
-            <a>Sidebar Item 2</a>
+            <NavLink
+              to="/dashboard/paymentHistory"
+              className="flex items-center gap-2"
+            >
+              <FaHistory />
+              {/* optional icon for better UX */}
+              <span>Payment History</span>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/dashboard/track" className="flex items-center gap-2">
+              <FaSearchLocation /> {/* optional icon */}
+              <span>Track A Parcel</span>
+            </NavLink>
+          </li>
+
+          <li>
+            <NavLink
+              to="/dashboard/UpdateProfile"
+              className="flex items-center gap-2"
+            >
+              <FaUserEdit /> {/* optional icon */}
+              <span>Update Profile</span>
+            </NavLink>
           </li>
         </ul>
       </div>
     </div>
-   
   );
 };
 

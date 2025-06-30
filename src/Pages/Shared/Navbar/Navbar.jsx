@@ -2,9 +2,31 @@ import React from 'react';
 import { Link, NavLink } from 'react-router';
 import ProFastLogo from '../Profastlogo/ProFastLogo';
 import useAuth from '../../../Hooks/useAuth';
+import Swal from 'sweetalert2';
 
 const Navbar = () => {
-  const { user } = useAuth();
+  const { user,logOut } = useAuth();
+  const hanndleLogout = () => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, logout'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logOut();
+        Swal.fire(
+          'Logout!',
+          'You have been logged out.',
+          'success'
+        )
+      }
+    })
+    
+  };
   const navitems = (
     <>
       <li>
@@ -64,9 +86,9 @@ const Navbar = () => {
         <ul className="menu menu-horizontal px-1">{navitems}</ul>
       </div>
       <div className="navbar-end">
-        <Link to="/login" className="btn btn-primary">
-          Login
-        </Link>
+        {
+          user?.email?<button onClick={hanndleLogout} className="btn btn-primary">Logout</button>:<Link to="/login"><button className="btn btn-primary">Login</button></Link>
+        }
       </div>
     </div>
   );
