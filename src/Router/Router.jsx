@@ -12,6 +12,7 @@ import DashBordLayout from '../Layouts/DashBordLayout';
 import MyParcels from '../Pages/DashBord/MyParcels/MyParcels';
 import Payment from '../Pages/DashBord/Payment/Payment';
 import PyamentHistory from '../Pages/DashBord/Payment/PyamentHistory';
+import TrackParcel from '../Pages/TrackPArcel/TrackParcel';
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -69,7 +70,10 @@ export const router = createBrowserRouter([
       {
         path: 'paymentHistory',
         Component: PyamentHistory,
-      },
+      },{
+        path:'track',
+        Component:TrackParcel
+      }
     ],
   },
 ]);

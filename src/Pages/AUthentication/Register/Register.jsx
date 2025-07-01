@@ -1,23 +1,49 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import useAuth from '../../../Hooks/useAuth';
 import { Link } from 'react-router';
+import axios from 'axios';
 
 const Register = () => {
+  const [image, setImage] = useState(null);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { createUser } = useAuth();
+  const { createUser,updateUser } = useAuth();
   const onSubmit = (data) => {
+    console.log(data);
     createUser(data.email, data.password)
       .then((res) => {
-        console.log(res);
+        // Update User In Database
+
+        // Update User Profile In Firebase
+        const userprofile = {
+          displayName: data.name,
+          photoURL: image,
+        };
+        updateUser(userprofile).then((res) => {
+          console.log(res);
+        })
+        
+        
+     
       })
       .catch((error) => {
         console.log(error);
       });
+  };
+  const handleImageUpload = async(event) => {
+    const image = event.target.files[0];
+  
+    const formData = new FormData();
+    formData.append('image', image);
+
+    const imgUploadUrl=`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_KEY}`
+    const res=await axios.post(imgUploadUrl, formData)
+    setImage(res.data.data.url);
+
   };
   return (
     <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
@@ -25,6 +51,27 @@ const Register = () => {
         <h1 className="text-5xl font-bold"> Create An Account!</h1>
         <form onSubmit={handleSubmit(onSubmit)}>
           <fieldset className="fieldset">
+            {/* Name */}
+            <label className="label">Name</label>
+            <input
+              type="text"
+              {...register('name', { required: true })}
+              className="input"
+              placeholder="Name"
+            />
+            {errors.name?.type === 'required' && (
+              <span className="text-red-600">Name field is required</span>
+            )}
+            {/* Photo */}
+            <label className="label">Photo</label>
+            <input
+              type="file"
+              onChange={handleImageUpload}
+              className="file input"
+              placeholder="Photo"
+            />
+
+            {/* Email */}
             <label className="label">Email</label>
             <input
               type="email"
@@ -35,7 +82,7 @@ const Register = () => {
             {errors.email?.type === 'required' && (
               <span className="text-red-600">Email field is required</span>
             )}
-
+            {/* Password  */}
             <label className="label">Password</label>
             <input
               type="password"
@@ -55,7 +102,9 @@ const Register = () => {
               </span>
             )}
 
-            <button className="btn btn-primary mt-4 text-black">Register</button>
+            <button className="btn btn-primary mt-4 text-black">
+              Register
+            </button>
           </fieldset>
           <p>
             <small>
