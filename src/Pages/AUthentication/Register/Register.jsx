@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import useAuth from '../../../Hooks/useAuth';
 import { Link } from 'react-router';
 import axios from 'axios';
+import useAxios from '../../../Hooks/useAxios';
 
 const Register = () => {
   const [image, setImage] = useState(null);
@@ -11,39 +12,43 @@ const Register = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { createUser,updateUser } = useAuth();
+  const { createUser, updateUser, logOut } = useAuth();
+  const axiosInstance = useAxios();
   const onSubmit = (data) => {
     console.log(data);
     createUser(data.email, data.password)
-      .then((res) => {
+      .then(async (res) => {
         // Update User In Database
-
+        const userInfo = {
+          email: data.email,
+          role: 'user', //default user role
+          created_at: new Date().toISOString(),
+          last_log_in: new Date().toISOString(),
+        };
+        const userRes = await axiosInstance.post('/users', userInfo);
+        console.log(userRes.data);
         // Update User Profile In Firebase
         const userprofile = {
           displayName: data.name,
           photoURL: image,
         };
-        updateUser(userprofile).then((res) => {
-          console.log(res);
-        })
-        
-        
-     
+        updateUser(userprofile).then(logOut());
       })
       .catch((error) => {
         console.log(error);
       });
   };
-  const handleImageUpload = async(event) => {
+  const handleImageUpload = async (event) => {
     const image = event.target.files[0];
-  
+
     const formData = new FormData();
     formData.append('image', image);
 
-    const imgUploadUrl=`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_KEY}`
-    const res=await axios.post(imgUploadUrl, formData)
+    const imgUploadUrl = `https://api.imgbb.com/1/upload?key=${
+      import.meta.env.VITE_IMGBB_KEY
+    }`;
+    const res = await axios.post(imgUploadUrl, formData);
     setImage(res.data.data.url);
-
   };
   return (
     <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
