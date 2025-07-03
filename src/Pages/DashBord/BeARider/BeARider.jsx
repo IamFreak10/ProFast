@@ -62,7 +62,7 @@ const BeARider = () => {
 
 
         // Send to your backend here
-        reset();
+        // reset();
     };
 
     return (
