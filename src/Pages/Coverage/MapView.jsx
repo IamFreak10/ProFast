@@ -8,6 +8,10 @@ import L from 'leaflet';
 // 🛠 Marker icon fix for Vite
 import iconUrl from 'leaflet/dist/images/marker-icon.png?url';
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png?url';
+import { useQuery } from '@tanstack/react-query';
+import useAxios from '../../Hooks/useAxios';
+import axios from 'axios';
+import { CircleLoader, ScaleLoader } from 'react-spinners';
 
 const DefaultIcon = new L.Icon({
   iconUrl,
@@ -36,29 +40,36 @@ function FitBoundsHandler({ locations }) {
 }
 
 export default function MapView() {
-  const [allBranchLocations, setAllBranchLocations] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState(true);
+
   const [error, setError] = useState(null);
+  const axiosInstance = useAxios();
 
   // 🔄 Fetch branch data
-  useEffect(() => {
-    fetch('/branchLocations.json')
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
-        setAllBranchLocations(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error:', err);
-        setError('Failed to load branch data.');
-        setLoading(false);
-      });
-  }, []);
-
+  // useEffect(() => {
+  //   fetch('/branchLocations.json')
+  //     .then((res) => {
+  //       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+  //       return res.json();
+  //     })
+  //     .then((data) => {
+  //       setAllBranchLocations(data);
+  //       setisPending(false);
+  //     })
+  //     .catch((err) => {
+  //       console.error('Error:', err);
+  //       setError('Failed to load branch data.');
+  //       setisPending(false);
+  //     });
+  // }, []);
+  const { isPending, data: allBranchLocations = [] } = useQuery({
+    queryKey: ['branchLocations'],
+    queryFn: async () => {
+      const res = await axiosInstance.get('/warehouse');
+      return res.data;
+    },
+  });
+  console.log(allBranchLocations);
   // 🔍 Filtered data
   const filteredBranchLocations = useMemo(() => {
     if (!searchTerm) return allBranchLocations;
@@ -68,9 +79,7 @@ export default function MapView() {
         branch.district.toLowerCase().includes(term) ||
         branch.city.toLowerCase().includes(term) ||
         (branch.covered_area &&
-          branch.covered_area.some((area) =>
-            area.toLowerCase().includes(term)
-          ))
+          branch.covered_area.some((area) => area.toLowerCase().includes(term)))
     );
   }, [allBranchLocations, searchTerm]);
 
@@ -94,7 +103,20 @@ export default function MapView() {
   };
 
   // 🧭 Conditional Renders
-  if (loading) return <p className="p-4 text-gray-500">Loading map data...</p>;
+  if (isPending)
+    return (
+      <>
+        <div className='flex justify-center items-center'>
+          <CircleLoader
+            color="rgba(52, 199, 88, 1)"
+            loading
+            size={195}
+            speedMultiplier={0.5}
+          />
+          ;
+        </div>
+      </>
+    );
   if (error) return <p className="p-4 text-red-500">{error}</p>;
 
   return (
