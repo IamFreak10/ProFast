@@ -14,6 +14,8 @@ import Payment from '../Pages/DashBord/Payment/Payment';
 import PyamentHistory from '../Pages/DashBord/Payment/PyamentHistory';
 import TrackParcel from '../Pages/TrackPArcel/TrackParcel';
 import BeARider from '../Pages/DashBord/BeARider/BeARider';
+import PendingRiders from '../Pages/DashBord/PendingRiders/PendingRiders';
+import ActiveRiders from '../Pages/DashBord/ActiveRiders/ActiveRider';
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -28,8 +30,12 @@ export const router = createBrowserRouter([
         Component: Coverage,
       },
       {
-        path:'beArider',
-        element:<PrivateRoutes><BeARider></BeARider></PrivateRoutes>
+        path: 'beArider',
+        element: (
+          <PrivateRoutes>
+            <BeARider></BeARider>
+          </PrivateRoutes>
+        ),
       },
       {
         path: 'sendparcel',
@@ -75,10 +81,19 @@ export const router = createBrowserRouter([
       {
         path: 'paymentHistory',
         Component: PyamentHistory,
-      },{
-        path:'track',
-        Component:TrackParcel
-      }
+      },
+      {
+        path: 'track',
+        Component: TrackParcel,
+      },
+      {
+        path: 'active-riders',
+        Component: ActiveRiders,
+      },
+      {
+        path: 'pending-riders',
+        Component: PendingRiders,
+      },
     ],
   },
 ]);

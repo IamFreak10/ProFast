@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import useAuth from '../../../Hooks/useAuth';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import axios from 'axios';
 import useAxios from '../../../Hooks/useAxios';
 
 const Register = () => {
+  const navigate = useNavigate();
   const [image, setImage] = useState(null);
   const {
     register,
@@ -17,7 +18,7 @@ const Register = () => {
   const onSubmit = (data) => {
     console.log(data);
     createUser(data.email, data.password)
-      .then(async (res) => {
+      .then(async () => {
         // Update User In Database
         const userInfo = {
           email: data.email,
@@ -34,10 +35,16 @@ const Register = () => {
         };
         updateUser(userprofile).then(logOut());
       })
+      .then(() => {
+        navigate('/login');
+
+
+      })
       .catch((error) => {
         console.log(error);
       });
   };
+  
   const handleImageUpload = async (event) => {
     const image = event.target.files[0];
 
