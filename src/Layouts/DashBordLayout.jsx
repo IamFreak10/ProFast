@@ -3,8 +3,11 @@ import { NavLink, Outlet } from 'react-router';
 import ProFastLogo from '../Pages/Shared/Profastlogo/ProFastLogo';
 import {
   FaBoxOpen,
+  FaCheckCircle,
+  FaClipboardList,
   FaHistory,
   FaHome,
+  FaMotorcycle,
   FaSearchLocation,
   FaUserCheck,
   FaUserClock,
@@ -98,8 +101,33 @@ const DashBordLayout = () => {
               <span>Update Profile</span>
             </NavLink>
           </li>
-          { !roleLoading && role === 'admin' &&
+          {/* Rider Links */}
+
+          {!roleLoading && role === 'rider' && (
             <>
+              <li>
+                <NavLink to="/dashboard/pending-deliveries">
+                  <FaClipboardList className="inline-block mr-2" />
+                  Pending Deliveries
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/dashboard/completed-deliveries">
+                  <FaCheckCircle className="inline-block mr-2" />
+                  My Completed Deliveries
+                </NavLink>
+              </li>
+            </>
+          )}
+          {/* Admin Links */}
+          {!roleLoading && role === 'admin' && (
+            <>
+              <li>
+                <NavLink to="/dashboard/assign-rider">
+                  <FaMotorcycle className="inline-block mr-2" />
+                  Assign Rider
+                </NavLink>
+              </li>
               <li>
                 <NavLink to="/dashboard/active-riders">
                   <FaUserCheck className="inline-block mr-2" />
@@ -119,7 +147,7 @@ const DashBordLayout = () => {
                 </NavLink>
               </li>
             </>
-          }
+          )}
         </ul>
       </div>
     </div>

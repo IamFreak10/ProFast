@@ -19,6 +19,10 @@ import ActiveRiders from '../Pages/DashBord/ActiveRiders/ActiveRider';
 import MakeAdmin from '../Pages/DashBord/MakeAdmin/MakeAdmin';
 import AdminRoute from '../Routes/AdminRoute';
 import Forbidden from '../Pages/Forbidden/Forbidden';
+import AssignRider from '../Pages/DashBord/AssignRider.jsx/AssignRider';
+import RiderRoute from '../Routes/RiderRoute';
+import PendingDeliveries from '../Pages/DashBord/PendingDeliveries/PendingDeliveries';
+import MyCompletedDeliveries from '../Pages/DashBord/CompletedDeliveries/MyCompletedDeliveries';
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -93,12 +97,37 @@ export const router = createBrowserRouter([
         path: 'track',
         Component: TrackParcel,
       },
+      // Rider Omnly
+      {
+        path: 'pending-deliveries',
+        element: (
+          <RiderRoute>
+            <PendingDeliveries></PendingDeliveries>
+          </RiderRoute>
+        ),
+      },
+      {
+        path:'completed-deliveries',
+        element:<RiderRoute>
+         <MyCompletedDeliveries></MyCompletedDeliveries>
+        </RiderRoute>
+      },
+
+      // aDMIN oNLY
       {
         path: 'active-riders',
         // Component: ActiveRiders,
         element: (
           <AdminRoute>
             <ActiveRiders />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: 'assign-rider',
+        element: (
+          <AdminRoute>
+            <AssignRider />
           </AdminRoute>
         ),
       },

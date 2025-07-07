@@ -31,8 +31,11 @@ const PaymenForm = () => {
     console.log('loading');
     <ScaleLoader height={61} radius={9} width={21} />;
   }
-  const price = parcelInfo.cost;
-  console.log(price);
+  let price = parcelInfo.cost;
+  if(price<80){
+    price = 80; // Minimum price set to 80
+  }
+
   const amountInCents = price * 100;
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -59,7 +62,10 @@ const PaymenForm = () => {
       amountInCents,
       id,
     });
+    console.log('Payment Intent Response:', res.data);
+    // doent console log response
     const clientSecret = res.data.clientSecret;
+
     //step-3:Confirm Payment
     const result = await stripe.confirmCardPayment(clientSecret, {
       payment_method: {
@@ -106,7 +112,7 @@ const PaymenForm = () => {
             icon: 'success',
             iconColor: '#22c55e',
             showConfirmButton: true,
-            confirmButtonText: "📦 Go to My Parcels",
+            confirmButtonText: '📦 Go to My Parcels',
             confirmButtonColor: '#22c55e',
             customClass: {
               popup: 'swal2-rounded swal2-shadow',

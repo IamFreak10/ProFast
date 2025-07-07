@@ -5,6 +5,7 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 import useAuth from '../../Hooks/useAuth';
 import axios from 'axios';
 import useAxiosSecure from '../../Hooks/useAxiosSecure';
+import { useNavigate } from 'react-router';
 
 const SendParcel = () => {
   const { user } = useAuth();
@@ -16,7 +17,6 @@ const SendParcel = () => {
     return `TRK-${yyyymmdd}-${randomPart}`;
   }
 
- 
   const {
     register,
     handleSubmit,
@@ -28,7 +28,6 @@ const SendParcel = () => {
   } = useForm({
     defaultValues: {
       type: 'document',
-     
     },
   });
 
@@ -38,6 +37,7 @@ const SendParcel = () => {
   const [senderCenters, setSenderCenters] = useState([]);
   const [receiverDistricts, setReceiverDistricts] = useState([]);
   const [receiverCenters, setReceiverCenters] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch('/branchLocations.json')
@@ -256,18 +256,18 @@ ${!sameDistrict ? '- Outside District Charge: ৳40' : ''}
 
       try {
         axiosSecure.post('/parcels', payload).then((res) => {
-         if(res.data.insertedId){
-          // TODO:Redirect to payment page
-           Swal.fire({
-             title: 'Redirecting...',
-             text: 'Redirecting to payment page...',
-             icon: 'success',
-             timer:1500,
-             showConfirmButton:false,
-           });
-         }
+          if (res.data.insertedId) {
+            navigate('/dashboard/myParcels');
+            Swal.fire({
+              title: 'Redirecting...',
+              text: 'Redirecting to payment page...',
+              icon: 'success',
+              timer: 1500,
+              showConfirmButton: false,
+            });
+          }
         });
-      } catch  {
+      } catch {
         Swal.fire('❌ Error', 'Failed to save parcel info.', 'error');
       }
     }
@@ -344,7 +344,7 @@ ${!sameDistrict ? '- Outside District Charge: ৳40' : ''}
                   className="input input-bordered w-full"
                 />
               </div>
-             
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                   Contact
