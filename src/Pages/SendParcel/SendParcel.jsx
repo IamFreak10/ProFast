@@ -6,6 +6,7 @@ import useAuth from '../../Hooks/useAuth';
 import axios from 'axios';
 import useAxiosSecure from '../../Hooks/useAxiosSecure';
 import { useNavigate } from 'react-router';
+import useTrackingLogger from '../../Hooks/useTrackingLogger';
 
 const SendParcel = () => {
   const { user } = useAuth();
@@ -38,7 +39,7 @@ const SendParcel = () => {
   const [receiverDistricts, setReceiverDistricts] = useState([]);
   const [receiverCenters, setReceiverCenters] = useState([]);
   const navigate = useNavigate();
-
+  const { logTracking } = useTrackingLogger();
   useEffect(() => {
     fetch('/branchLocations.json')
       .then((res) => res.json())
@@ -243,6 +244,7 @@ ${!sameDistrict ? '- Outside District Charge: ৳40' : ''}
     });
 
     if (result.isConfirmed) {
+      const tracking_id = generateTrackingId();
       const payload = {
         ...data,
         cost: total,
@@ -251,13 +253,12 @@ ${!sameDistrict ? '- Outside District Charge: ৳40' : ''}
         delivery_status: 'not_collected',
 
         creation_date: new Date().toISOString(),
-        tracking_id: generateTrackingId(),
+        tracking_id: tracking_id,
       };
 
       try {
-        axiosSecure.post('/parcels', payload).then((res) => {
+        axiosSecure.post('/parcels', payload).then(async (res) => {
           if (res.data.insertedId) {
-            navigate('/dashboard/myParcels');
             Swal.fire({
               title: 'Redirecting...',
               text: 'Redirecting to payment page...',
@@ -265,6 +266,14 @@ ${!sameDistrict ? '- Outside District Charge: ৳40' : ''}
               timer: 1500,
               showConfirmButton: false,
             });
+            await logTracking({
+              tracking_id: tracking_id,
+              status: 'Parcel Has Created',
+              details: `Created by ${user?.displayName}`,
+              updated_by: user.email,
+            });
+
+            navigate('/dashboard/myParcels');
           }
         });
       } catch {

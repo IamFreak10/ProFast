@@ -7,6 +7,7 @@ import {
   FaClipboardList,
   FaHistory,
   FaHome,
+  FaMoneyBillWave,
   FaMotorcycle,
   FaSearchLocation,
   FaUserCheck,
@@ -115,6 +116,12 @@ const DashBordLayout = () => {
                 <NavLink to="/dashboard/completed-deliveries">
                   <FaCheckCircle className="inline-block mr-2" />
                   My Completed Deliveries
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/dashboard/my-earnings">
+                  <FaMoneyBillWave className="inline-block mr-2" />
+                  My Earnings
                 </NavLink>
               </li>
             </>

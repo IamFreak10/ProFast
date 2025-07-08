@@ -23,6 +23,7 @@ import AssignRider from '../Pages/DashBord/AssignRider.jsx/AssignRider';
 import RiderRoute from '../Routes/RiderRoute';
 import PendingDeliveries from '../Pages/DashBord/PendingDeliveries/PendingDeliveries';
 import MyCompletedDeliveries from '../Pages/DashBord/CompletedDeliveries/MyCompletedDeliveries';
+import MyEarnigs from '../Pages/MyEarnings/MyEarnigs';
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -107,10 +108,20 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path:'completed-deliveries',
-        element:<RiderRoute>
-         <MyCompletedDeliveries></MyCompletedDeliveries>
-        </RiderRoute>
+        path: 'completed-deliveries',
+        element: (
+          <RiderRoute>
+            <MyCompletedDeliveries></MyCompletedDeliveries>
+          </RiderRoute>
+        ),
+      },
+      {
+        path: 'my-earnings',
+        element: (
+          <RiderRoute>
+            <MyEarnigs></MyEarnigs>
+          </RiderRoute>
+        ),
       },
 
       // aDMIN oNLY
