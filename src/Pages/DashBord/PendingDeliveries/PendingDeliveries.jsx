@@ -2,13 +2,15 @@ import { useQuery } from '@tanstack/react-query';
 import useAxiosSecure from '../../../Hooks/useAxiosSecure';
 import Swal from 'sweetalert2';
 import useAuth from '../../../Hooks/useAuth';
+import useTrackingLogger from '../../../Hooks/useTrackingLogger';
 
 const PendingDeliveries = () => {
   const axiosSecure = useAxiosSecure();
   const { user } = useAuth(); // Authenticated rider email
+  const { logTracking } = useTrackingLogger();
 
   // Debug rider email
-  console.log('Authenticated Rider Email:', user?.email);
+
   const riderEmail = user?.email;
   const {
     data: parcels = [],
@@ -25,22 +27,36 @@ const PendingDeliveries = () => {
     },
     enabled: !!riderEmail,
   });
-
+  console.log(parcels);
   const updateDeliveryStatus = async (parcelId, status) => {
     try {
       const res = await axiosSecure.patch(`/rider/parcels/${parcelId}`, {
         delivery_status: status,
       });
+      if (status === 'on_transit') {
+        await logTracking({
+          tracking_id: parcels.tracking_id,
+          status: `Picked Up by  ${user?.displayName}`,
+          details: `Rider ${user?.displayName} has ppicked up the parcel`,
+          updated_by: user?.email,
+        });
+      }
+      if(status === 'delivered'){
+        await logTracking({
+          tracking_id: parcels.tracking_id,
+          status: `Delivered by  ${user?.displayName}`,
+          details: `Rider ${user?.displayName} has delivered the parcel`,
+          updated_by: user?.email,
+        });
+      }
 
       if (res.data.modifiedCount > 0) {
         Swal.fire('Success', `Marked as ${status}`, 'success');
         if (status === 'delivered') {
-          
-            await axiosSecure.patch('/rider/status', {
-              status: 'active',
-              rider_email: user?.email,
-            });
-          
+          await axiosSecure.patch('/rider/status', {
+            status: 'active',
+            rider_email: user?.email,
+          });
         }
         refetch();
       } else {

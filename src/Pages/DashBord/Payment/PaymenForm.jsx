@@ -6,6 +6,7 @@ import useAxiosSecure from '../../../Hooks/useAxiosSecure';
 import { ScaleLoader } from 'react-spinners';
 import useAuth from '../../../Hooks/useAuth';
 import Swal from 'sweetalert2';
+import useTrackingLogger from '../../../Hooks/useTrackingLogger';
 
 const PaymenForm = () => {
   const stripe = useStripe();
@@ -13,6 +14,7 @@ const PaymenForm = () => {
   const { id } = useParams();
   const axiosSecure = useAxiosSecure();
   const { user } = useAuth();
+  const { logTracking } = useTrackingLogger();
   const navigate = useNavigate();
 
   const [error, setError] = useState('');
@@ -27,12 +29,12 @@ const PaymenForm = () => {
       return res.data;
     },
   });
+
   if (isLoading || isPending) {
-    console.log('loading');
-    <ScaleLoader height={61} radius={9} width={21} />;
+    return <ScaleLoader height={61} radius={9} width={21} />;
   }
   let price = parcelInfo.cost;
-  if(price<80){
+  if (price < 80) {
     price = 80; // Minimum price set to 80
   }
 
@@ -62,7 +64,7 @@ const PaymenForm = () => {
       amountInCents,
       id,
     });
-    console.log('Payment Intent Response:', res.data);
+
     // doent console log response
     const clientSecret = res.data.clientSecret;
 
@@ -84,7 +86,7 @@ const PaymenForm = () => {
       if (result.paymentIntent.status === 'succeeded') {
         console.log('payment successful');
         // Step-4 Mark Parcel PAid also Create Payment History
-        console.log(id);
+       
         const paymentData = {
           id,
           email: user.email,
@@ -125,8 +127,14 @@ const PaymenForm = () => {
                 popup.style.boxShadow = '0 0 10px rgba(34, 197, 94, 0.3)';
               }
             },
-          }).then((result) => {
+          }).then(async (result) => {
             if (result.isConfirmed) {
+              await logTracking({
+                tracking_id: parcelInfo?.tracking_id,
+                status: 'Parcels Charge is Paid',
+                details: `Parcels Charge is Paid by ${user?.displayName}`,
+                updated_by: user?.email,
+              });
               navigate('/dashboard/myParcels');
             }
           });

@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import useAxiosSecure from '../../../Hooks/useAxiosSecure';
 import Swal from 'sweetalert2';
+import useTrackingLogger from '../../../Hooks/useTrackingLogger';
+import useAuth from '../../../Hooks/useAuth';
 
 const AssignRider = () => {
   const axiosSecure = useAxiosSecure();
   const [selectedParcel, setSelectedParcel] = useState(null);
-
+  const { logTracking } = useTrackingLogger();
+  const { user } = useAuth();
   const {
     data: parcels = [],
     isLoading,
@@ -63,6 +66,14 @@ const AssignRider = () => {
         `Parcel ${selectedParcel.tracking_id} assigned to ${selectedRider.name}`,
         'success'
       );
+      // 5️⃣ Update track of parcel
+      await logTracking({
+        tracking_id: selectedParcel.tracking_id,
+        status: 'Rider Assigned By Admin',
+        details: `Parcel assigned to ${selectedRider?.name} by Admin:${user?.displayName}`,
+        updated_by: user?.email,
+      });
+
       refetch();
 
       // 5️⃣ Close modal

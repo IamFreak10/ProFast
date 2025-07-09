@@ -7,7 +7,6 @@ const useTrackingLogger = () => {
     tracking_id,
     status,
     details,
-
     updated_by,
   }) => {
     try {
